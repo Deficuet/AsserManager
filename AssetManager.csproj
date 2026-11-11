@@ -4,13 +4,12 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <LangVersion>10.0</LangVersion>
     <ImplicitUsings>disable</ImplicitUsings>
-    <Nullable>enable</Nullable>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <OutputType>Library</OutputType>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageId>Deficuet.$(AssemblyName)</PackageId>
     <Title>Deficuet.AssetManager</Title>
-    <Version>0.0.1-alpha.1</Version>
+    <Version>0.0.1-alpha.2</Version>
     <Authors>Deficuet</Authors>
     <Company />
     <Description>An asset manager without Unity env</Description>
@@ -18,13 +17,24 @@
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryUrl>https://github.com/Deficuet/AsserManager</RepositoryUrl>
     <PackageTags>PolyType</PackageTags>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="PolyType" Version="2.0.0-rc.4" />
+    <PackageReference Include="Deficuet.AssetsTools.NET" Version="3.0.5-alpha.1" />
+    <PackageReference Include="Deficuet.AssetsTools.NET.Cpp2IL" Version="3.0.4-alpha.1" />
+    <PackageReference Include="PolyType" Version="2.0.0-rc.4">
+      <PrivateAssets>
+        contentFiles;build;buildMultitargeting;buildTransitive
+      </PrivateAssets>
+    </PackageReference>
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="LICENSE">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
     <None Update="README.md">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
