@@ -16,7 +16,7 @@ namespace AssetManager.TypeTree
         )
         {
             Definition = definition ?? throw new ArgumentNullException(nameof(definition));
-            CommonStringBufferBytes = commonStringBufferBytes ?? Array.Empty<byte>();
+            CommonStringBufferBytes = commonStringBufferBytes;
         }
 
         public List<TypeTreeNode> Nodes => Definition.Nodes;

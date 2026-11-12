@@ -135,7 +135,9 @@ namespace AssetManager.TypeTree
                     commonStrings: null
                 );
 
-            return new TypeTreeResult(typeTree, Array.Empty<byte>());
+            // Passing null makes AssetsTools.NET fall back to its built-in
+            // common string table when resolving node strings.
+            return new TypeTreeResult(typeTree);
         }
     }
 }
