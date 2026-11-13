@@ -23,6 +23,7 @@ namespace AssetManager.TypeTree
 
         Bool,
         Hash128,
+        Guid,
 
         ByteArray,
         Typeless,

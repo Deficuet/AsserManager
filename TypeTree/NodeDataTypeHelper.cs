@@ -26,43 +26,43 @@ namespace AssetManager.TypeTree
             "double"
         };
 
-        public static bool IsSInt(this TypeTree node)
+        public static bool EvalIsSInt(this TypeTree node)
         {
             return SIntTypeNameSet.Contains(node.Type) && node.Children.Count == 0;
         }
 
-        public static bool IsUInt(this TypeTree node)
+        public static bool EvalIsUInt(this TypeTree node)
         {
             return UIntTypeNameSet.Contains(node.Type) && node.Children.Count == 0;
         }
 
-        public static bool IsDecimal(this TypeTree node)
+        public static bool EvalIsDecimal(this TypeTree node)
         {
             return DecimalTypeNameSet.Contains(node.Type) && node.Children.Count == 0;
         }
 
-        public static bool IsBool(this TypeTree node)
+        public static bool EvalIsBool(this TypeTree node)
         {
             return node.Type == "bool" && node.Node.ByteSize == 1 && node.Children.Count == 0;
         }
 
-        public static bool IsChar(this TypeTree node)
+        public static bool EvalIsChar(this TypeTree node)
         {
             return node.Type == "char" && node.Children.Count == 0
                 && (node.Node.ByteSize == 1 || node.Node.ByteSize == 2);
         }
 
-        public static bool IsGuid(this TypeTree node)
+        public static bool EvalIsGuid(this TypeTree node)
         {
             return node.Type == "GUID" && node.Node.ByteSize == 16 && node.Children.Count == 4;
         }
 
-        public static bool IsHash128(this TypeTree node)
+        public static bool EvalIsHash128(this TypeTree node)
         {
             return node.Type == "Hash128" && node.Node.ByteSize == 16 && node.Children.Count == 16;
         }
 
-        public static bool IsArray(this TypeTree node)
+        public static bool EvalIsArray(this TypeTree node)
         {
             if (node.Children.Count != 1)
             {
@@ -76,13 +76,13 @@ namespace AssetManager.TypeTree
             return arrayNode.Children[0].DataType == NodeDataType.Int32;
         }
 
-        public static bool IsString(this TypeTree node)
+        public static bool EvalIsString(this TypeTree node)
         {
             if (node.Type != "string")
             {
                 return false;
             }
-            if (!node.IsArray())
+            if (!node.EvalIsArray())
             {
                 return false;
             }
@@ -90,19 +90,19 @@ namespace AssetManager.TypeTree
             return elementType.IsCharType();
         }
 
-        public static bool IsPair(this TypeTree node)
+        public static bool EvalIsPair(this TypeTree node)
         {
             return node.Type == "pair" && node.Children.Count == 2;
         }
 
-        public static bool IsMap(this TypeTree node)
+        public static bool EvalIsMap(this TypeTree node)
         {
             return node.Type == "map"
-                && node.IsArray()
+                && node.EvalIsArray()
                 && node.Children[0].Children[1].DataType == NodeDataType.Pair;
         }
 
-        public static bool IsTypeless(this TypeTree node)
+        public static bool EvalIsTypeless(this TypeTree node)
         {
             if (node.Type != "TypelessData")
             {
@@ -120,14 +120,14 @@ namespace AssetManager.TypeTree
             return elementType.IsSIntType() || elementType.IsUIntType();
         }
 
-        public static bool IsByteArray(this TypeTree node)
+        public static bool EvalIsByteArray(this TypeTree node)
         {
-            return node.IsArray() && node.Children[0].Children[1].DataType == NodeDataType.UInt8;
+            return node.EvalIsArray() && node.Children[0].Children[1].DataType == NodeDataType.UInt8;
         }
 
         public static NodeDataType MatchDataType(TypeTree node)
         {
-            if (node.IsSInt())
+            if (node.EvalIsSInt())
             {
                 return node.Node.ByteSize switch
                 {
@@ -138,7 +138,7 @@ namespace AssetManager.TypeTree
                     _ => NodeDataType.Class
                 };
             }
-            else if (node.IsUInt())
+            else if (node.EvalIsUInt())
             {
                 return node.Node.ByteSize switch
                 {
@@ -149,7 +149,7 @@ namespace AssetManager.TypeTree
                     _ => NodeDataType.Class
                 };
             }
-            else if (node.IsDecimal())
+            else if (node.EvalIsDecimal())
             {
                 return node.Node.ByteSize switch
                 {
@@ -158,11 +158,11 @@ namespace AssetManager.TypeTree
                     _ => NodeDataType.Class
                 };
             }
-            else if (node.IsBool())
+            else if (node.EvalIsBool())
             {
                 return NodeDataType.Bool;
             }
-            else if (node.IsChar())
+            else if (node.EvalIsChar())
             {
                 return node.Node.ByteSize switch
                 {
@@ -171,31 +171,35 @@ namespace AssetManager.TypeTree
                     _ => NodeDataType.Class
                 };
             }
-            else if (node.IsString())
+            else if (node.EvalIsString())
             {
                 return NodeDataType.String;
             }
-            else if (node.IsMap())
+            else if (node.EvalIsMap())
             {
                 return NodeDataType.Map;
             }
-            else if (node.IsPair())
+            else if (node.EvalIsPair())
             {
                 return NodeDataType.Pair;
             }
-            else if (node.IsHash128())
+            else if (node.EvalIsHash128())
             {
                 return NodeDataType.Hash128;
             }
-            else if (node.IsTypeless())
+            else if (node.EvalIsGuid())
+            {
+                return NodeDataType.Guid;
+            }
+            else if (node.EvalIsTypeless())
             {
                 return NodeDataType.Typeless;
             }
-            else if (node.IsByteArray())
+            else if (node.EvalIsByteArray())
             {
                 return NodeDataType.ByteArray;
             }
-            else if (node.IsArray())
+            else if (node.EvalIsArray())
             {
                 return NodeDataType.Array;
             }
