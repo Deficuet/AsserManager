@@ -9,31 +9,29 @@ namespace AssetManager.TypeTree
 {
     public static class TypeTreeUtils
     {
-        public static TypeTreeResult GetBuiltinTypeTree(
-            AssetsManager manager,
-            UnityVersion unityVersion,
+        public static bool TryGetBuiltinTypeTree(
+            ClassDatabaseFile classDb,
             AssetClassID classId,
+            out TypeTreeResult result,
             bool preferEditor = false)
         {
-            // Extract the ClassDatabase for the requested Unity version.
-            ClassDatabaseFile classDb =
-                manager.LoadClassDatabaseFromPackage(unityVersion);
-
+            result = default!;
             // Convert ClassDatabase directly to TypeTreeType.
             TypeTreeType typeTree =
                 ClassDatabaseToTypeTree.Convert(
                     classDb,
                     (int)classId,
                     preferEditor
-                ) ?? throw new InvalidOperationException(
-                    $"ClassID {classId} was not found in TPK " +
-                    $"for Unity {unityVersion}."
                 );
+            if (typeTree is null)
+            {
+                return false;
+            }
 
             // Build the exact Common String Table for this TPK version.
             byte[] commonStrings = BuildCommonStringBuffer(classDb);
-
-            return new TypeTreeResult(typeTree, commonStrings);
+            result = new TypeTreeResult(typeTree, commonStrings);
+            return true;
         }
 
         private static byte[] BuildCommonStringBuffer(ClassDatabaseFile classDb)
@@ -66,66 +64,32 @@ namespace AssetManager.TypeTree
             return stream.ToArray();
         }
 
-        public static TypeTreeResult GetCustomMonoBehaviourTypeTree(
-            AssetsManager manager,
+        public static bool TryGetCustomMonoBehaviourTypeTree(
+            AssetTypeTemplateField monoBehaviourBaseField,
             UnityVersion unityVersion,
-            string globalMetadataPath,
-            string gameAssemblyPath,
-            string assemblyName,
-            string namespaceName,
-            string className,
+            Cpp2IlTempGenerator generator,
+            CustomClassSource source,
+            out TypeTreeResult result,
             ushort scriptIndex = 0xffff)
         {
-            // --------------------------------------------------------
-            // 1. Load Unity's native MonoBehaviour template from TPK.
-            // --------------------------------------------------------
-
-            ClassDatabaseFile classDb =
-                manager.LoadClassDatabaseFromPackage(unityVersion);
-
-            ClassDatabaseType monoBehaviourType =
-                classDb.FindAssetClassByID(
-                    (int)AssetClassID.MonoBehaviour
-                ) ?? throw new InvalidOperationException(
-                    "MonoBehaviour was not found in TPK."
-                );
-            var baseField = new AssetTypeTemplateField();
-
-            baseField.FromClassDatabase(
-                classDb,
-                monoBehaviourType,
-                preferEditor: false
-            );
-
-            // --------------------------------------------------------
-            // 2. Reconstruct the custom MonoBehaviour fields using IL2CPP.
-            // --------------------------------------------------------
-
-            var generator = new Cpp2IlTempGenerator(
-                globalMetadataPath,
-                gameAssemblyPath
-            );
+            result = default!;
 
             AssetTypeTemplateField generatedTemplate;
 
             try
             {
                 generatedTemplate = generator.GetTemplateField(
-                    baseField,
-                    assemblyName,
-                    namespaceName,
-                    className,
+                    monoBehaviourBaseField,
+                    source.AssemblyName,
+                    source.Namespace,
+                    source.ClassName,
                     unityVersion
                 );
             }
-            finally
+            catch
             {
-                generator.Dispose();
+                return false;
             }
-
-            // --------------------------------------------------------
-            // 3. Convert the generated template to TypeTreeType.
-            // --------------------------------------------------------
 
             TypeTreeType typeTree =
                 TemplateFieldToTypeTree.Convert(
@@ -137,7 +101,8 @@ namespace AssetManager.TypeTree
 
             // Passing null makes AssetsTools.NET fall back to its built-in
             // common string table when resolving node strings.
-            return new TypeTreeResult(typeTree);
+            result = new TypeTreeResult(typeTree);
+            return true;
         }
     }
 }
