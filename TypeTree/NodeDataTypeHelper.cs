@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace AssetManager.TypeTree
 {
@@ -28,101 +28,78 @@ namespace AssetManager.TypeTree
 
         public static bool EvalIsSInt(this TypeTree node)
         {
-            return SIntTypeNameSet.Contains(node.Type) && node.Children.Count == 0;
+            return SIntTypeNameSet.Contains(node.Type) && node is { Children.Count: 0 };
         }
 
         public static bool EvalIsUInt(this TypeTree node)
         {
-            return UIntTypeNameSet.Contains(node.Type) && node.Children.Count == 0;
+            return UIntTypeNameSet.Contains(node.Type) && node is { Children.Count: 0 };
         }
 
         public static bool EvalIsDecimal(this TypeTree node)
         {
-            return DecimalTypeNameSet.Contains(node.Type) && node.Children.Count == 0;
+            return DecimalTypeNameSet.Contains(node.Type) && node is { Children.Count: 0 };
         }
 
         public static bool EvalIsBool(this TypeTree node)
         {
-            return node.Type == "bool" && node.Node.ByteSize == 1 && node.Children.Count == 0;
+            return node is { Type: "bool", Node.ByteSize: 1, Children.Count: 0 };
         }
 
         public static bool EvalIsChar(this TypeTree node)
         {
-            return node.Type == "char" && node.Children.Count == 0
-                && (node.Node.ByteSize == 1 || node.Node.ByteSize == 2);
+            return node is { Type: "char", Children.Count: 0 }
+                && node.Node.ByteSize is 1 or 2;
         }
 
         public static bool EvalIsGuid(this TypeTree node)
         {
-            return node.Type == "GUID" && node.Node.ByteSize == 16 && node.Children.Count == 4;
+            return node is { Type: "GUID", Node.ByteSize: 16, Children.Count: 4 };
         }
 
         public static bool EvalIsHash128(this TypeTree node)
         {
-            return node.Type == "Hash128" && node.Node.ByteSize == 16 && node.Children.Count == 16;
+            return node is { Type: "Hash128", Node.ByteSize: 16, Children.Count: 16 };
         }
 
         public static bool EvalIsArray(this TypeTree node)
         {
-            if (node.Children.Count != 1)
-            {
-                return false;
-            }
-            var arrayNode = node.Children[0];
-            if (arrayNode.Name != "Array" || arrayNode.Children.Count != 2)
-            {
-                return false;
-            }
-            return arrayNode.Children[0].DataType == NodeDataType.Int32;
+            return node is { Children.Count: 1 }
+                && node.Children[0] is { Name: "Array", Children.Count: 2 }
+                && node.Children[0].Children[0] is { DataType: NodeDataType.Int32 };
         }
 
         public static bool EvalIsString(this TypeTree node)
         {
-            if (node.Type != "string")
-            {
-                return false;
-            }
-            if (!node.EvalIsArray())
-            {
-                return false;
-            }
-            var elementType = node.Children[0].Children[1].DataType;
-            return elementType.IsCharType();
+            return node is { Type: "string" }
+                && node.EvalIsArray()
+                && node.Children[0].Children[1].DataType.IsCharType();
         }
 
         public static bool EvalIsPair(this TypeTree node)
         {
-            return node.Type == "pair" && node.Children.Count == 2;
+            return node is { Type: "pair", Children.Count: 2 };
         }
 
         public static bool EvalIsMap(this TypeTree node)
         {
-            return node.Type == "map"
+            return node is { Type: "map" }
                 && node.EvalIsArray()
-                && node.Children[0].Children[1].DataType == NodeDataType.Pair;
+                && node.Children[0].Children[1] is { DataType: NodeDataType.Pair };
         }
 
         public static bool EvalIsTypeless(this TypeTree node)
         {
-            if (node.Type != "TypelessData")
-            {
-                return false;
-            }
-            if (node.Children.Count != 2)
-            {
-                return false;
-            }
-            if (node.Children[0].DataType != NodeDataType.Int32)
-            {
-                return false;
-            }
-            var elementType = node.Children[1].DataType;
-            return elementType.IsSIntType() || elementType.IsUIntType();
+            return node is { Type: "TypelessData", Children.Count: 2 }
+                && node.Children[0] is { DataType: NodeDataType.Int32 }
+                && (node.Children[1].DataType.IsSIntType()
+                    || node.Children[1].DataType.IsUIntType());
         }
 
         public static bool EvalIsByteArray(this TypeTree node)
         {
-            return node.EvalIsArray() && node.Children[0].Children[1].DataType == NodeDataType.UInt8;
+            return node.EvalIsArray()
+                && node.Children[0].Children[1] is { DataType: NodeDataType.UInt8 };
         }
 
         public static NodeDataType MatchDataType(TypeTree node)

@@ -1,4 +1,4 @@
-using AssetsTools.NET;
+﻿using AssetsTools.NET;
 using AssetManager.Tools;
 using System;
 using System.Buffers;

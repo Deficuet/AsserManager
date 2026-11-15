@@ -1,4 +1,4 @@
-namespace AssetManager.TypeTree
+﻿namespace AssetManager.TypeTree
 {
     public enum NodeDataType : byte
     {
