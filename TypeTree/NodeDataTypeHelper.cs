@@ -87,48 +87,43 @@ namespace AssetManager.TypeTree
 
         public static bool EvalIsPos2f(this TypeTree node)
         {
-            return node is { Node.ByteSize: 8 }
-                && EvalHasFloatChildren(node, Pos2FieldNames);
+            return EvalHasFloatChildren(node, Pos2FieldNames);
         }
 
         public static bool EvalIsPos3f(this TypeTree node)
         {
-            return node is { Node.ByteSize: 12 }
-                && EvalHasFloatChildren(node, Pos3FieldNames);
+            return EvalHasFloatChildren(node, Pos3FieldNames);
         }
 
         public static bool EvalIsPos4f(this TypeTree node)
         {
-            return node is { Node.ByteSize: 16 }
-                && EvalHasFloatChildren(node, Pos4FieldNames);
+            return EvalHasFloatChildren(node, Pos4FieldNames);
         }
 
         public static bool EvalIsColorRGBA4f(this TypeTree node)
         {
-            return node is { Node.ByteSize: 16 }
-                && EvalHasFloatChildren(node, Color4fFieldNames);
+            return EvalHasFloatChildren(node, Color4fFieldNames);
         }
 
         public static bool EvalIsColorRGBA32(this TypeTree node)
         {
-            return node is { Node.ByteSize: 4, Children.Count: 1 }
+            return node is { Children.Count: 1 }
                 && node.Children[0] is { Name: "rgba", DataType: NodeDataType.UInt32 };
         }
 
         public static bool EvalIsMatrix4x4f(this TypeTree node)
         {
-            return node is { Node.ByteSize: 64 }
-                && EvalHasFloatChildren(node, Matrix4x4FieldNames);
+            return EvalHasFloatChildren(node, Matrix4x4FieldNames);
         }
 
         public static bool EvalIsGuid(this TypeTree node)
         {
-            return node is { Type: "GUID", Node.ByteSize: 16, Children.Count: 4 };
+            return node is { Type: "GUID", Children.Count: 4 };
         }
 
         public static bool EvalIsHash128(this TypeTree node)
         {
-            return node is { Type: "Hash128", Node.ByteSize: 16, Children.Count: 16 };
+            return node is { Type: "Hash128", Children.Count: 16 };
         }
 
         public static bool EvalIsArray(this TypeTree node)
@@ -173,7 +168,7 @@ namespace AssetManager.TypeTree
 
         public static bool EvalIsPPtr(this TypeTree node)
         {
-            return node is { Node.ByteSize: 12, Children.Count: 2 }
+            return node is { Children.Count: 2 }
                 && node.Type.StartsWith("PPtr<", StringComparison.Ordinal)
                 && node.Type.EndsWith(">", StringComparison.Ordinal)
                 && node.Children[0] is { Name: "m_FileID", DataType: NodeDataType.Int32 }
