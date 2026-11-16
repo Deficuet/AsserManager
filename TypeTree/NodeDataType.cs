@@ -22,13 +22,13 @@
         WideChar,
 
         Bool,
-        Pos2,       // Vector2f
-        Pos3,       // Vector3f
-        Pos4,       // Vector4f or Quaternionf
-        ColorRGBA,  // four float channels
-        Matrix4x4f,
-        PPtr,
 
+        Pos2f,       // Vector2f
+        Pos3f,       // Vector3f
+        Pos4f,       // Vector4f or Quaternionf
+        ColorRGBA4f,    // four float channels
+        ColorRGBA32,    // packed rgba
+        Matrix4x4f,
         Hash128,
         Guid,
 
@@ -40,6 +40,8 @@
         Map,
 
         Pair,
+
+        PPtr,
         Class,
 
         Unknown
