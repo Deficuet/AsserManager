@@ -254,6 +254,16 @@ namespace AssetManager.TypeTree
 
         public void Skip(EndianBinaryReader reader)
         {
+            if (DataType == NodeDataType.PPtr)
+            {
+                foreach (var child in Children)
+                {
+                    child.Skip(reader);
+                }
+                CheckAlignmentWith(reader);
+                return;
+            }
+
             if (DataType.IsValueType())
             {
                 if (Node.ByteSize == -1)

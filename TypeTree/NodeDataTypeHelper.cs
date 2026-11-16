@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace AssetManager.TypeTree
 {
@@ -26,6 +27,18 @@ namespace AssetManager.TypeTree
             "double"
         };
 
+        private static readonly string[] Pos2FieldNames = { "x", "y" };
+        private static readonly string[] Pos3FieldNames = { "x", "y", "z" };
+        private static readonly string[] Pos4FieldNames = { "x", "y", "z", "w" };
+        private static readonly string[] ColorRGBAFieldNames = { "r", "g", "b", "a" };
+        private static readonly string[] Matrix4x4FieldNames =
+        {
+            "e00", "e01", "e02", "e03",
+            "e10", "e11", "e12", "e13",
+            "e20", "e21", "e22", "e23",
+            "e30", "e31", "e32", "e33"
+        };
+
         public static bool EvalIsSInt(this TypeTree node)
         {
             return SIntTypeNameSet.Contains(node.Type) && node is { Children.Count: 0 };
@@ -50,6 +63,45 @@ namespace AssetManager.TypeTree
         {
             return node is { Type: "char", Children.Count: 0 }
                 && node.Node.ByteSize is 1 or 2;
+        }
+
+        public static bool EvalIsPos2(this TypeTree node)
+        {
+            return node is { Type: "Vector2f", Node.ByteSize: 8 }
+                && EvalHasFloatChildren(node, Pos2FieldNames);
+        }
+
+        public static bool EvalIsPos3(this TypeTree node)
+        {
+            return node is { Type: "Vector3f", Node.ByteSize: 12 }
+                && EvalHasFloatChildren(node, Pos3FieldNames);
+        }
+
+        public static bool EvalIsPos4(this TypeTree node)
+        {
+            return node is { Type: "Vector4f" or "Quaternionf", Node.ByteSize: 16 }
+                && EvalHasFloatChildren(node, Pos4FieldNames);
+        }
+
+        public static bool EvalIsColorRGBA(this TypeTree node)
+        {
+            return node is { Type: "ColorRGBA", Node.ByteSize: 16 }
+                && EvalHasFloatChildren(node, ColorRGBAFieldNames);
+        }
+
+        public static bool EvalIsMatrix4x4f(this TypeTree node)
+        {
+            return node is { Type: "Matrix4x4f", Node.ByteSize: 64 }
+                && EvalHasFloatChildren(node, Matrix4x4FieldNames);
+        }
+
+        public static bool EvalIsPPtr(this TypeTree node)
+        {
+            return node is { Node.ByteSize: 12, Children.Count: 2 }
+                && node.Type.StartsWith("PPtr<", StringComparison.Ordinal)
+                && node.Type.EndsWith(">", StringComparison.Ordinal)
+                && node.Children[0] is { Name: "m_FileID", DataType: NodeDataType.Int32 }
+                && node.Children[1] is { Name: "m_PathID", DataType: NodeDataType.Int64 };
         }
 
         public static bool EvalIsGuid(this TypeTree node)
@@ -148,6 +200,30 @@ namespace AssetManager.TypeTree
                     _ => NodeDataType.Class
                 };
             }
+            else if (node.EvalIsPos4())
+            {
+                return NodeDataType.Pos4;
+            }
+            else if (node.EvalIsPos3())
+            {
+                return NodeDataType.Pos3;
+            }
+            else if (node.EvalIsPos2())
+            {
+                return NodeDataType.Pos2;
+            }
+            else if (node.EvalIsColorRGBA())
+            {
+                return NodeDataType.ColorRGBA;
+            }
+            else if (node.EvalIsMatrix4x4f())
+            {
+                return NodeDataType.Matrix4x4f;
+            }
+            else if (node.EvalIsPPtr())
+            {
+                return NodeDataType.PPtr;
+            }
             else if (node.EvalIsString())
             {
                 return NodeDataType.String;
@@ -208,7 +284,11 @@ namespace AssetManager.TypeTree
 
         public static bool IsValueType(this NodeDataType type)
         {
-            return type <= NodeDataType.ByteArray;
+            // ByteArray is handled by the array path, and PPtr is a reference type
+            // that is handled separately by TypeTree.Skip.
+            return type <= NodeDataType.Bool
+                || (type >= NodeDataType.Pos2 && type <= NodeDataType.Matrix4x4f)
+                || type is NodeDataType.Hash128 or NodeDataType.Guid;
         }
 
         public static bool IsArrayType(this NodeDataType type)
@@ -224,6 +304,26 @@ namespace AssetManager.TypeTree
         public static bool IsCompositeType(this NodeDataType type)
         {
             return type >= NodeDataType.Pair && type < NodeDataType.Unknown;
+        }
+
+        private static bool EvalHasFloatChildren(TypeTree node, string[] fieldNames)
+        {
+            if (node.Children.Count != fieldNames.Length)
+            {
+                return false;
+            }
+
+            for (int i = 0; i < fieldNames.Length; ++i)
+            {
+                TypeTree child = node.Children[i];
+                if (child.DataType != NodeDataType.Float
+                    || !string.Equals(child.Name, fieldNames[i], StringComparison.Ordinal))
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
     }
 }

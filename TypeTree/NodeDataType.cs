@@ -22,6 +22,13 @@
         WideChar,
 
         Bool,
+        Pos2,       // Vector2f
+        Pos3,       // Vector3f
+        Pos4,       // Vector4f or Quaternionf
+        ColorRGBA,  // four float channels
+        Matrix4x4f,
+        PPtr,
+
         Hash128,
         Guid,
 
