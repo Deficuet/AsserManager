@@ -39,7 +39,7 @@ namespace AssetManager.TypeTree
             "e30", "e31", "e32", "e33"
         };
 
-        private static bool EvalHasFloatChildren(TypeTree node, string[] fieldNames)
+        private static bool EvalHasFloatChildren(TypeTreeBranch node, string[] fieldNames)
         {
             if (node.Children.Count != fieldNames.Length)
             {
@@ -48,7 +48,7 @@ namespace AssetManager.TypeTree
 
             for (int i = 0; i < fieldNames.Length; ++i)
             {
-                TypeTree child = node.Children[i];
+                TypeTreeBranch child = node.Children[i];
                 if (child.DataType != NodeDataType.Float
                     || !string.Equals(child.Name, fieldNames[i], StringComparison.Ordinal))
                 {
@@ -59,100 +59,100 @@ namespace AssetManager.TypeTree
             return true;
         }
 
-        public static bool EvalIsSInt(this TypeTree node)
+        public static bool EvalIsSInt(this TypeTreeBranch node)
         {
             return SIntTypeNameSet.Contains(node.Type) && node is { Children.Count: 0 };
         }
 
-        public static bool EvalIsUInt(this TypeTree node)
+        public static bool EvalIsUInt(this TypeTreeBranch node)
         {
             return UIntTypeNameSet.Contains(node.Type) && node is { Children.Count: 0 };
         }
 
-        public static bool EvalIsDecimal(this TypeTree node)
+        public static bool EvalIsDecimal(this TypeTreeBranch node)
         {
             return DecimalTypeNameSet.Contains(node.Type) && node is { Children.Count: 0 };
         }
 
-        public static bool EvalIsBool(this TypeTree node)
+        public static bool EvalIsBool(this TypeTreeBranch node)
         {
             return node is { Type: "bool", Node.ByteSize: 1, Children.Count: 0 };
         }
 
-        public static bool EvalIsChar(this TypeTree node)
+        public static bool EvalIsChar(this TypeTreeBranch node)
         {
             return node is { Type: "char", Children.Count: 0 }
                 && node.Node.ByteSize is 1 or 2;
         }
 
-        public static bool EvalIsPos2f(this TypeTree node)
+        public static bool EvalIsPos2f(this TypeTreeBranch node)
         {
             return EvalHasFloatChildren(node, Pos2FieldNames);
         }
 
-        public static bool EvalIsPos3f(this TypeTree node)
+        public static bool EvalIsPos3f(this TypeTreeBranch node)
         {
             return EvalHasFloatChildren(node, Pos3FieldNames);
         }
 
-        public static bool EvalIsPos4f(this TypeTree node)
+        public static bool EvalIsPos4f(this TypeTreeBranch node)
         {
             return EvalHasFloatChildren(node, Pos4FieldNames);
         }
 
-        public static bool EvalIsColorRGBA4f(this TypeTree node)
+        public static bool EvalIsColorRGBA4f(this TypeTreeBranch node)
         {
             return EvalHasFloatChildren(node, Color4fFieldNames);
         }
 
-        public static bool EvalIsColorRGBA32(this TypeTree node)
+        public static bool EvalIsColorRGBA32(this TypeTreeBranch node)
         {
             return node is { Children.Count: 1 }
                 && node.Children[0] is { Name: "rgba", DataType: NodeDataType.UInt32 };
         }
 
-        public static bool EvalIsMatrix4x4f(this TypeTree node)
+        public static bool EvalIsMatrix4x4f(this TypeTreeBranch node)
         {
             return EvalHasFloatChildren(node, Matrix4x4FieldNames);
         }
 
-        public static bool EvalIsGuid(this TypeTree node)
+        public static bool EvalIsGuid(this TypeTreeBranch node)
         {
             return node is { Type: "GUID", Children.Count: 4 };
         }
 
-        public static bool EvalIsHash128(this TypeTree node)
+        public static bool EvalIsHash128(this TypeTreeBranch node)
         {
             return node is { Type: "Hash128", Children.Count: 16 };
         }
 
-        public static bool EvalIsArray(this TypeTree node)
+        public static bool EvalIsArray(this TypeTreeBranch node)
         {
             return node is { Children.Count: 1 }
                 && node.Children[0] is { Name: "Array", Children.Count: 2 }
                 && node.Children[0].Children[0] is { DataType: NodeDataType.Int32 };
         }
 
-        public static bool EvalIsString(this TypeTree node)
+        public static bool EvalIsString(this TypeTreeBranch node)
         {
             return node is { Type: "string" }
                 && node.EvalIsArray()
                 && node.Children[0].Children[1].DataType.IsCharType();
         }
 
-        public static bool EvalIsPair(this TypeTree node)
+        public static bool EvalIsPair(this TypeTreeBranch node)
         {
             return node is { Type: "pair", Children.Count: 2 };
         }
 
-        public static bool EvalIsMap(this TypeTree node)
+        public static bool EvalIsMap(this TypeTreeBranch node)
         {
             return node is { Type: "map" }
                 && node.EvalIsArray()
                 && node.Children[0].Children[1] is { DataType: NodeDataType.Pair };
         }
 
-        public static bool EvalIsTypeless(this TypeTree node)
+        public static bool EvalIsTypeless(this TypeTreeBranch node)
         {
             return node is { Type: "TypelessData", Children.Count: 2 }
                 && node.Children[0] is { DataType: NodeDataType.Int32 }
@@ -160,13 +160,13 @@ namespace AssetManager.TypeTree
                     || node.Children[1].DataType.IsUIntType());
         }
 
-        public static bool EvalIsByteArray(this TypeTree node)
+        public static bool EvalIsByteArray(this TypeTreeBranch node)
         {
             return node.EvalIsArray()
                 && node.Children[0].Children[1] is { DataType: NodeDataType.UInt8 };
         }
 
-        public static bool EvalIsPPtr(this TypeTree node)
+        public static bool EvalIsPPtr(this TypeTreeBranch node)
         {
             return node is { Children.Count: 2 }
                 && node.Type.StartsWith("PPtr<", StringComparison.Ordinal)
@@ -175,7 +175,7 @@ namespace AssetManager.TypeTree
                 && node.Children[1] is { Name: "m_PathID", DataType: NodeDataType.Int64 };
         }
 
-        public static NodeDataType MatchDataType(TypeTree node)
+        public static NodeDataType MatchDataType(TypeTreeBranch node)
         {
             if (node.EvalIsSInt())
             {

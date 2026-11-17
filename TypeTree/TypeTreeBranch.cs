@@ -8,7 +8,7 @@ using System.Text;
 
 namespace AssetManager.TypeTree
 {
-    public sealed class TypeTree
+    public sealed class TypeTreeBranch
     {
         public TypeTreeNode Node { get; }
 
@@ -16,11 +16,11 @@ namespace AssetManager.TypeTree
 
         public string Name { get; }
 
-        public List<TypeTree> Children { get; } = new List<TypeTree>();
+        public List<TypeTreeBranch> Children { get; } = new List<TypeTreeBranch>();
 
         private NodeDataType _dataType = NodeDataType.Unknown;
 
-        private TypeTree(TypeTreeNode node, TypeTreeResult result)
+        private TypeTreeBranch(TypeTreeNode node, TypeTreeResult result)
         {
             Node = node;
             Type = result.GetTypeString(node);
@@ -39,7 +39,7 @@ namespace AssetManager.TypeTree
             }
         }
 
-        public static TypeTree Build(TypeTreeResult result)
+        public static TypeTreeBranch Build(TypeTreeResult result)
         {
             if (result == null)
             {
@@ -94,11 +94,11 @@ namespace AssetManager.TypeTree
                 }
             }
 
-            TypeTree root = null;
-            Stack<TypeTree> stack = new();
+            TypeTreeBranch root = null;
+            Stack<TypeTreeBranch> stack = new();
             foreach (TypeTreeNode node in nodes)
             {
-                var currentNode = new TypeTree(node, result);
+                var currentNode = new TypeTreeBranch(node, result);
                 while (stack.Count > 0 && stack.Peek().Node.Level >= node.Level)
                 {
                     stack.Pop();

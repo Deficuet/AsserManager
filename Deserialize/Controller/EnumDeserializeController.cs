@@ -1,7 +1,7 @@
 ﻿using AssetManager.Tools;
+using AssetManager.TypeTree;
 using System;
 using System.Runtime.CompilerServices;
-using TypeTreeType = global::AssetManager.TypeTree.TypeTree;
 
 namespace AssetManager.Deserialize.Controller
 {
@@ -23,7 +23,7 @@ namespace AssetManager.Deserialize.Controller
 
         protected override TEnum ReadCore(
             EndianBinaryReader reader,
-            TypeTreeType node)
+            TypeTreeBranch node)
         {
             _underlyingController ??= _underlyingControllerFactory();
 

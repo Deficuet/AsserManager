@@ -1,27 +1,26 @@
 ﻿using AssetManager.TypeTree;
-using TypeTreeType = global::AssetManager.TypeTree.TypeTree;
 
 namespace AssetManager.Deserialize.Deserializer
 {
     internal readonly struct ArrayNodeInfo
     {
         private ArrayNodeInfo(
-            TypeTreeType arrayNode,
-            TypeTreeType sizeNode,
-            TypeTreeType elementNode)
+            TypeTreeBranch arrayNode,
+            TypeTreeBranch sizeNode,
+            TypeTreeBranch elementNode)
         {
             ArrayNode = arrayNode;
             SizeNode = sizeNode;
             ElementNode = elementNode;
         }
 
-        public TypeTreeType ArrayNode { get; }
+        public TypeTreeBranch ArrayNode { get; }
 
-        public TypeTreeType SizeNode { get; }
+        public TypeTreeBranch SizeNode { get; }
 
-        public TypeTreeType ElementNode { get; }
+        public TypeTreeBranch ElementNode { get; }
 
-        public static ArrayNodeInfo Create(TypeTreeType node)
+        public static ArrayNodeInfo Create(TypeTreeBranch node)
         {
             if (node.DataType == NodeDataType.Typeless)
             {
@@ -49,8 +48,8 @@ namespace AssetManager.Deserialize.Deserializer
         }
 
         private static ArrayNodeInfo CreateCore(
-            TypeTreeType rootNode,
-            TypeTreeType arrayNode)
+            TypeTreeBranch rootNode,
+            TypeTreeBranch arrayNode)
         {
             if (arrayNode.Children.Count < 2)
             {
@@ -59,8 +58,8 @@ namespace AssetManager.Deserialize.Deserializer
                 );
             }
 
-            TypeTreeType sizeNode = arrayNode.Children[0];
-            TypeTreeType elementNode = arrayNode.Children[1];
+            TypeTreeBranch sizeNode = arrayNode.Children[0];
+            TypeTreeBranch elementNode = arrayNode.Children[1];
             if (sizeNode.DataType != NodeDataType.Int32)
             {
                 throw new DeserializeException(

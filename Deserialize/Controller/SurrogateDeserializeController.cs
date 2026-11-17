@@ -1,7 +1,7 @@
 ﻿using AssetManager.Tools;
+using AssetManager.TypeTree;
 using PolyType;
 using System;
-using TypeTreeType = global::AssetManager.TypeTree.TypeTree;
 
 namespace AssetManager.Deserialize.Controller
 {
@@ -25,7 +25,7 @@ namespace AssetManager.Deserialize.Controller
 
         protected override T ReadCore(
             EndianBinaryReader reader,
-            TypeTreeType node)
+            TypeTreeBranch node)
         {
             _surrogateController ??= _surrogateControllerFactory();
 

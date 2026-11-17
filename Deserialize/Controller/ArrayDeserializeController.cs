@@ -1,7 +1,7 @@
 ﻿using AssetManager.Deserialize.Deserializer;
 using AssetManager.Tools;
+using AssetManager.TypeTree;
 using System;
-using TypeTreeType = global::AssetManager.TypeTree.TypeTree;
 
 namespace AssetManager.Deserialize.Controller
 {
@@ -21,7 +21,7 @@ namespace AssetManager.Deserialize.Controller
 
         protected override TEnumerable ReadCore(
             EndianBinaryReader reader,
-            TypeTreeType node)
+            TypeTreeBranch node)
         {
             ArrayNodeInfo info = ArrayNodeInfo.Create(node);
             int count = info.SizeNode.ReadInt(reader);

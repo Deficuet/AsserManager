@@ -1,19 +1,19 @@
 ﻿using AssetManager.Tools;
+using AssetManager.TypeTree;
 using System.Collections.Generic;
-using TypeTreeType = global::AssetManager.TypeTree.TypeTree;
 
 namespace AssetManager.Deserialize.Deserializer
 {
     internal sealed class ObjectDeserializer
     {
         private readonly EndianBinaryReader _reader;
-        private readonly IReadOnlyList<TypeTreeType> _children;
+        private readonly IReadOnlyList<TypeTreeBranch> _children;
         private readonly IReadOnlyDictionary<string, int> _positionByName;
         private int _index;
 
         public ObjectDeserializer(
             EndianBinaryReader reader,
-            TypeTreeType objectNode,
+            TypeTreeBranch objectNode,
             IReadOnlyDictionary<string, int> positionByName)
         {
             _reader = reader;
@@ -23,11 +23,11 @@ namespace AssetManager.Deserialize.Deserializer
 
         public bool TryReadNext(
             out int parameterPosition,
-            out TypeTreeType node)
+            out TypeTreeBranch node)
         {
             while (_index < _children.Count)
             {
-                TypeTreeType child = _children[_index++];
+                TypeTreeBranch child = _children[_index++];
                 if (_positionByName.TryGetValue(
                     child.Name,
                     out parameterPosition))

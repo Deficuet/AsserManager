@@ -1,8 +1,8 @@
 ﻿using AssetManager.Deserialize.Deserializer;
 using AssetManager.Tools;
+using AssetManager.TypeTree;
 using AssetsTools.NET;
 using PolyType;
-using TypeTreeType = global::AssetManager.TypeTree.TypeTree;
 
 namespace AssetManager.Deserialize.Controller
 {
@@ -19,7 +19,7 @@ namespace AssetManager.Deserialize.Controller
 
         protected override Hash128 ReadCore(
             EndianBinaryReader reader,
-            TypeTreeType node)
+            TypeTreeBranch node)
         {
             byte[] data = new byte[16];
 

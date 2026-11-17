@@ -1,12 +1,12 @@
 ﻿using AssetManager.Tools;
+using AssetManager.TypeTree;
 using System;
-using TypeTreeType = global::AssetManager.TypeTree.TypeTree;
 
 namespace AssetManager.Deserialize.Controller
 {
     internal abstract class DeserializeControllerBase<T> : IDeserializeController<T>
     {
-        public T Deserialize(EndianBinaryReader reader, TypeTreeType node)
+        public T Deserialize(EndianBinaryReader reader, TypeTreeBranch node)
         {
             if (reader == null)
             {
@@ -25,13 +25,13 @@ namespace AssetManager.Deserialize.Controller
 
         object IDeserializeController.Deserialize(
             EndianBinaryReader reader,
-            TypeTreeType node)
+            TypeTreeBranch node)
         {
             return Deserialize(reader, node);
         }
 
         protected abstract T ReadCore(
             EndianBinaryReader reader,
-            TypeTreeType node);
+            TypeTreeBranch node);
     }
 }

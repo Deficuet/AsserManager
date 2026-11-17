@@ -2,18 +2,17 @@
 using AssetManager.Tools;
 using AssetManager.TypeTree;
 using System;
-using TypeTreeType = global::AssetManager.TypeTree.TypeTree;
 
 namespace AssetManager.Deserialize.Controller
 {
     internal interface IPrimitiveController<T> : IDeserializeController<T>
     {
-        bool TryGetElementSize(TypeTreeType elementNode, out int byteSize);
+        bool TryGetElementSize(TypeTreeBranch elementNode, out int byteSize);
 
         T[] ReadArray(
             EndianBinaryReader reader,
             int count,
-            TypeTreeType elementNode,
+            TypeTreeBranch elementNode,
             int byteSize);
     }
 
@@ -23,12 +22,12 @@ namespace AssetManager.Deserialize.Controller
         private readonly NodeDataType _dataType;
         private readonly int _size;
         private readonly bool _isChar;
-        private readonly Func<EndianBinaryReader, TypeTreeType, T> _read;
+        private readonly Func<EndianBinaryReader, TypeTreeBranch, T> _read;
 
         public PrimitiveDeserializeController(
             NodeDataType dataType,
             int size,
-            Func<EndianBinaryReader, TypeTreeType, T> read,
+            Func<EndianBinaryReader, TypeTreeBranch, T> read,
             bool isChar = false)
         {
             _dataType = dataType;
@@ -39,7 +38,7 @@ namespace AssetManager.Deserialize.Controller
 
         protected override T ReadCore(
             EndianBinaryReader reader,
-            TypeTreeType node)
+            TypeTreeBranch node)
         {
             if (_isChar)
             {
@@ -83,7 +82,7 @@ namespace AssetManager.Deserialize.Controller
         }
 
         public bool TryGetElementSize(
-            TypeTreeType elementNode,
+            TypeTreeBranch elementNode,
             out int byteSize)
         {
             if (_isChar)
@@ -111,7 +110,7 @@ namespace AssetManager.Deserialize.Controller
         public T[] ReadArray(
             EndianBinaryReader reader,
             int count,
-            TypeTreeType elementNode,
+            TypeTreeBranch elementNode,
             int byteSize)
         {
             if (count < 0)

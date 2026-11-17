@@ -1,9 +1,9 @@
 ﻿using AssetManager.Deserialize.Deserializer;
 using AssetManager.Tools;
+using AssetManager.TypeTree;
 using PolyType.Abstractions;
 using System;
 using System.Collections.Generic;
-using TypeTreeType = global::AssetManager.TypeTree.TypeTree;
 
 namespace AssetManager.Deserialize.Controller
 {
@@ -19,7 +19,7 @@ namespace AssetManager.Deserialize.Controller
         void DeserializeInto(
             ref TArgumentState state,
             EndianBinaryReader reader,
-            TypeTreeType node);
+            TypeTreeBranch node);
     }
 
     internal sealed class ParameterController<TArgumentState, TParameterType>
@@ -55,7 +55,7 @@ namespace AssetManager.Deserialize.Controller
         public void DeserializeInto(
             ref TArgumentState state,
             EndianBinaryReader reader,
-            TypeTreeType node)
+            TypeTreeBranch node)
         {
             _controller ??= _controllerFactory();
 
@@ -76,7 +76,7 @@ namespace AssetManager.Deserialize.Controller
 
         protected override T ReadCore(
             EndianBinaryReader reader,
-            TypeTreeType node)
+            TypeTreeBranch node)
         {
             node.Skip(reader);
             return _constructor();
@@ -128,7 +128,7 @@ namespace AssetManager.Deserialize.Controller
 
         protected override TDeclaringType ReadCore(
             EndianBinaryReader reader,
-            TypeTreeType node)
+            TypeTreeBranch node)
         {
             TArgumentState state = _argumentStateConstructor();
             try
@@ -141,7 +141,7 @@ namespace AssetManager.Deserialize.Controller
 
                 while (objectDeserializer.TryReadNext(
                     out int position,
-                    out TypeTreeType child))
+                    out TypeTreeBranch child))
                 {
                     _parameters[position].DeserializeInto(
                         ref state,

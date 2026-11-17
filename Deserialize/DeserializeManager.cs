@@ -1,9 +1,9 @@
 ﻿using AssetManager.Deserialize.Controller;
 using AssetManager.Tools;
+using AssetManager.TypeTree;
 using PolyType;
 using System;
 using System.Collections.Generic;
-using TypeTreeType = global::AssetManager.TypeTree.TypeTree;
 
 namespace AssetManager.Deserialize
 {
@@ -23,7 +23,7 @@ namespace AssetManager.Deserialize
 
         public T Deserialize<T>(
             EndianBinaryReader reader,
-            TypeTreeType rootNode)
+            TypeTreeBranch rootNode)
         {
             if (reader == null)
             {

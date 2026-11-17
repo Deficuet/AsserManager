@@ -2,7 +2,6 @@
 using AssetManager.Tools;
 using AssetManager.TypeTree;
 using System.Text;
-using TypeTreeType = global::AssetManager.TypeTree.TypeTree;
 
 namespace AssetManager.Deserialize.Controller
 {
@@ -11,7 +10,7 @@ namespace AssetManager.Deserialize.Controller
     {
         protected override string ReadCore(
             EndianBinaryReader reader,
-            TypeTreeType node)
+            TypeTreeBranch node)
         {
             if (node.DataType != NodeDataType.String)
             {
@@ -28,7 +27,7 @@ namespace AssetManager.Deserialize.Controller
                 );
             }
 
-            TypeTreeType arrayNode = node.Children[0];
+            TypeTreeBranch arrayNode = node.Children[0];
             if (arrayNode.Children.Count < 2)
             {
                 throw new DeserializeException(
@@ -36,8 +35,8 @@ namespace AssetManager.Deserialize.Controller
                 );
             }
 
-            TypeTreeType sizeNode = arrayNode.Children[0];
-            TypeTreeType charNode = arrayNode.Children[1];
+            TypeTreeBranch sizeNode = arrayNode.Children[0];
+            TypeTreeBranch charNode = arrayNode.Children[1];
             int size = sizeNode.ReadInt(reader);
             if (size < 0)
             {
