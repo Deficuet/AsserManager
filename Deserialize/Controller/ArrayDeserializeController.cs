@@ -35,7 +35,7 @@ namespace AssetManager.Deserialize.Controller
             _elementController ??= _elementControllerFactory();
 
             TElement[] values;
-            if ((info.ElementNode.Node.MetaFlags & 0x4000) == 0
+            if (!info.ElementNode.ShouldAlignStream
                 && _elementController
                     is IPrimitiveController<TElement> primitive
                 && primitive.TryGetElementSize(

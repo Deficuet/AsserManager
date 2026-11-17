@@ -30,6 +30,8 @@ namespace AssetManager.TypeTree
         private static readonly string[] Pos2FieldNames = { "x", "y" };
         private static readonly string[] Pos3FieldNames = { "x", "y", "z" };
         private static readonly string[] Pos4FieldNames = { "x", "y", "z", "w" };
+        private static readonly string[] Pos2IntFieldNames = { "x", "y" };
+        private static readonly string[] Pos3IntFieldNames = { "x", "y", "z" };
         private static readonly string[] Color4fFieldNames = { "r", "g", "b", "a" };
         private static readonly string[] Matrix4x4FieldNames =
         {
@@ -50,6 +52,26 @@ namespace AssetManager.TypeTree
             {
                 TypeTreeBranch child = node.Children[i];
                 if (child.DataType != NodeDataType.Float
+                    || !string.Equals(child.Name, fieldNames[i], StringComparison.Ordinal))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        private static bool EvalHasIntChildren(TypeTreeBranch node, string[] fieldNames)
+        {
+            if (node.Children.Count != fieldNames.Length)
+            {
+                return false;
+            }
+
+            for (int i = 0; i < fieldNames.Length; ++i)
+            {
+                TypeTreeBranch child = node.Children[i];
+                if (child.DataType != NodeDataType.Int32
                     || !string.Equals(child.Name, fieldNames[i], StringComparison.Ordinal))
                 {
                     return false;
@@ -98,6 +120,16 @@ namespace AssetManager.TypeTree
         public static bool EvalIsPos4f(this TypeTreeBranch node)
         {
             return EvalHasFloatChildren(node, Pos4FieldNames);
+        }
+
+        public static bool EvalIsPos2Int(this TypeTreeBranch node)
+        {
+            return EvalHasIntChildren(node, Pos2IntFieldNames);
+        }
+
+        public static bool EvalIsPos3Int(this TypeTreeBranch node)
+        {
+            return EvalHasIntChildren(node, Pos3IntFieldNames);
         }
 
         public static bool EvalIsColorRGBA4f(this TypeTreeBranch node)
@@ -158,12 +190,6 @@ namespace AssetManager.TypeTree
                 && node.Children[0] is { DataType: NodeDataType.Int32 }
                 && (node.Children[1].DataType.IsSIntType()
                     || node.Children[1].DataType.IsUIntType());
-        }
-
-        public static bool EvalIsByteArray(this TypeTreeBranch node)
-        {
-            return node.EvalIsArray()
-                && node.Children[0].Children[1] is { DataType: NodeDataType.UInt8 };
         }
 
         public static bool EvalIsPPtr(this TypeTreeBranch node)
@@ -233,6 +259,14 @@ namespace AssetManager.TypeTree
             {
                 return NodeDataType.Pos2f;
             }
+            else if (node.EvalIsPos3Int())
+            {
+                return NodeDataType.Pos3Int;
+            }
+            else if (node.EvalIsPos2Int())
+            {
+                return NodeDataType.Pos2Int;
+            }
             else if (node.EvalIsColorRGBA4f())
             {
                 return NodeDataType.ColorRGBA4f;
@@ -273,10 +307,6 @@ namespace AssetManager.TypeTree
             {
                 return NodeDataType.Typeless;
             }
-            else if (node.EvalIsByteArray())
-            {
-                return NodeDataType.ByteArray;
-            }
             else if (node.EvalIsArray())
             {
                 return NodeDataType.Array;
@@ -309,12 +339,12 @@ namespace AssetManager.TypeTree
 
         public static bool IsValueType(this NodeDataType type)
         {
-            return type < NodeDataType.ByteArray;
+            return type < NodeDataType.Typeless;
         }
 
         public static bool IsArrayType(this NodeDataType type)
         {
-            return type >= NodeDataType.ByteArray && type < NodeDataType.Pair;
+            return type >= NodeDataType.Typeless && type < NodeDataType.Pair;
         }
 
         public static bool IsCompositeArrayType(this NodeDataType type)

@@ -26,13 +26,14 @@
         Pos2f,       // Vector2f
         Pos3f,       // Vector3f
         Pos4f,       // Vector4f or Quaternionf
+        Pos2Int,     // int2
+        Pos3Int,     // int3
         ColorRGBA4f,    // four float channels
         ColorRGBA32,    // packed rgba
         Matrix4x4f,
         Hash128,
         Guid,
 
-        ByteArray,
         Typeless,
         String,
 

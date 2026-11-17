@@ -27,8 +27,7 @@ namespace AssetManager.Deserialize.Deserializer
                 return CreateCore(node, node);
             }
 
-            if (node.DataType == NodeDataType.ByteArray
-                || node.DataType == NodeDataType.Array
+            if (node.DataType == NodeDataType.Array
                 || node.DataType == NodeDataType.Map)
             {
                 if (node.Children.Count == 0)

@@ -16,6 +16,8 @@ namespace AssetManager.TypeTree
 
         public string Name { get; }
 
+        public bool ShouldAlignStream { get; }
+
         public List<TypeTreeBranch> Children { get; } = new List<TypeTreeBranch>();
 
         private NodeDataType _dataType = NodeDataType.Unknown;
@@ -25,6 +27,7 @@ namespace AssetManager.TypeTree
             Node = node;
             Type = result.GetTypeString(node);
             Name = result.GetNameString(node);
+            ShouldAlignStream = (node.MetaFlags & 0x4000) != 0;
         }
 
         public NodeDataType DataType
@@ -118,7 +121,7 @@ namespace AssetManager.TypeTree
 
         public void CheckAlignmentWith(EndianBinaryReader reader, int alignment = 4)
         {
-            if ((Node.MetaFlags & 0x4000) != 0)
+            if (ShouldAlignStream)
             {
                 reader.AlignStream(alignment);
             }

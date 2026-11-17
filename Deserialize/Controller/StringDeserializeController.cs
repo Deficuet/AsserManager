@@ -60,7 +60,7 @@ namespace AssetManager.Deserialize.Controller
                 );
             }
 
-            if ((charNode.Node.MetaFlags & 0x4000) == 0)
+            if (!charNode.ShouldAlignStream)
             {
                 if (size > int.MaxValue / charWidth)
                 {

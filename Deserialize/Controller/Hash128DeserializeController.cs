@@ -26,7 +26,7 @@ namespace AssetManager.Deserialize.Controller
             bool needsAlignment = false;
             for (int i = 0; i < node.Children.Count; ++i)
             {
-                if ((node.Children[i].Node.MetaFlags & 0x4000) != 0)
+                if (node.Children[i].ShouldAlignStream)
                 {
                     needsAlignment = true;
                     break;
