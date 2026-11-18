@@ -8,12 +8,14 @@ namespace AssetManager.TypeTree
         Inherited = false)]
     public class TypeTreeSourceAttribute : Attribute
     {
+        public string UnityVersion { get; }
         public string AssemblyName { get; }
         public string Namespace { get; }
         public string ClassName { get; }
 
-        public TypeTreeSourceAttribute(string assemblyName, string @namespace, string className)
+        public TypeTreeSourceAttribute(string unityVersion, string assemblyName, string @namespace, string className)
         {
+            UnityVersion = unityVersion;
             AssemblyName = assemblyName;
             Namespace = @namespace;
             ClassName = className;
