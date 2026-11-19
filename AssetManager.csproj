@@ -42,6 +42,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="BundleFile\" />
     <Folder Include="Deserialize\Controller\" />
     <Folder Include="Deserialize\Deserializer\" />
   </ItemGroup>

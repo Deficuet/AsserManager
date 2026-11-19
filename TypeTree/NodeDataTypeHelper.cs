@@ -337,6 +337,16 @@ namespace AssetManager.TypeTree
             return type >= NodeDataType.Char && type < NodeDataType.Bool;
         }
 
+        public static bool IsPrimitiveType(this NodeDataType type)
+        {
+            return type < NodeDataType.Pos2f;
+        }
+
+        public static bool IsCompositeValueType(this NodeDataType type)
+        {
+            return type >= NodeDataType.Pos2f && type < NodeDataType.Typeless;
+        }
+
         public static bool IsValueType(this NodeDataType type)
         {
             return type < NodeDataType.Typeless;

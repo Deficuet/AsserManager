@@ -257,7 +257,7 @@ namespace AssetManager.TypeTree
 
         public void Skip(EndianBinaryReader reader)
         {
-            if (DataType.IsValueType())
+            if (DataType.IsPrimitiveType())
             {
                 if (Node.ByteSize == -1)
                 {
@@ -281,7 +281,7 @@ namespace AssetManager.TypeTree
                 }
                 arrayNode.CheckAlignmentWith(reader);
             }
-            else if (DataType.IsCompositeType())
+            else if (DataType.IsCompositeValueType() || DataType.IsCompositeType())
             {
                 foreach (var child in Children)
                 {
