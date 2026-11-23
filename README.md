@@ -31,3 +31,33 @@ Supported behavior:
 - Missing required members throw `DeserializeException`; unknown type tree
   fields are skipped.
 - Every consumed type tree node checks its alignment flag before returning.
+
+## Cpp2IL custom types
+
+`Cpp2ILManager` owns the single LibCpp2IL runtime used by custom class
+generation. It wraps `Cpp2IL.Core` for inheritance, enum, and custom-attribute
+metadata and attaches a non-owning `AssetsTools.NET.Cpp2IL.Cpp2IlTempGenerator`
+for serialization templates:
+
+```csharp
+using var cpp2il = new Cpp2ILManager(
+    gameAssemblyPath,
+    metadataPath,
+    unityVersion
+);
+
+Cpp2ILTypeChain chain;
+if (!cpp2il.TryBuildCustomTypeChain(
+    monoBehaviourBaseField,
+    "Assembly-CSharp",
+    "My.Game",
+    "MyBehaviour",
+    out chain))
+{
+    throw new InvalidOperationException("Unsupported inheritance chain.");
+}
+```
+
+`Cpp2ILTypeInfo` exposes the full template field, own fields, first member
+order, type tree, and enum information. Parent templates must be cloned before
+appending child fields; the manager never mutates a cached parent.

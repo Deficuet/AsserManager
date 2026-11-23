@@ -91,18 +91,47 @@ namespace AssetManager.TypeTree
                 return false;
             }
 
-            TypeTreeType typeTree =
-                TemplateFieldToTypeTree.Convert(
-                    generatedTemplate,
-                    (int)AssetClassID.MonoBehaviour,
-                    scriptIndex,
-                    commonStrings: null
-                );
+            return TryConvertCustomTypeTree(
+                generatedTemplate,
+                out result,
+                scriptIndex
+            );
+        }
 
-            // Passing null makes AssetsTools.NET fall back to its built-in
-            // common string table when resolving node strings.
-            result = new TypeTreeResult(typeTree);
-            return true;
+        /// <summary>
+        /// Converts an already-built custom template field to a type tree.
+        /// </summary>
+        public static bool TryConvertCustomTypeTree(
+            AssetTypeTemplateField generatedTemplate,
+            out TypeTreeResult result,
+            ushort scriptIndex = 0xffff)
+        {
+            result = default!;
+
+            if (generatedTemplate == null)
+            {
+                return false;
+            }
+
+            try
+            {
+                TypeTreeType typeTree =
+                    TemplateFieldToTypeTree.Convert(
+                        generatedTemplate,
+                        (int)AssetClassID.MonoBehaviour,
+                        scriptIndex,
+                        commonStrings: null
+                    );
+
+                // Passing null makes AssetsTools.NET fall back to its built-in
+                // common string table when resolving node strings.
+                result = new TypeTreeResult(typeTree);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
     }
 }

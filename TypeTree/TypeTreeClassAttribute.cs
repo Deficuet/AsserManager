@@ -5,6 +5,7 @@ namespace AssetManager.TypeTree
     [AttributeUsage(
         AttributeTargets.Class
             | AttributeTargets.Struct
+            | AttributeTargets.Enum
             | AttributeTargets.Field
             | AttributeTargets.Property,
         AllowMultiple = false,

@@ -327,6 +327,11 @@ namespace AssetManager.TypeTree
             return type >= NodeDataType.UInt8 && type < NodeDataType.Float;
         }
 
+        public static bool IsIntegerType(this NodeDataType type)
+        {
+            return type < NodeDataType.Float;
+        }
+
         public static bool IsDecimalType(this NodeDataType type)
         {
             return type >= NodeDataType.Float && type < NodeDataType.Char;
