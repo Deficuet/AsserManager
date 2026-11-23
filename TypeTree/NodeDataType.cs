@@ -28,6 +28,7 @@
         Pos4f,       // Vector4f or Quaternionf
         Pos2Int,     // int2
         Pos3Int,     // int3
+        Rect4f,
         ColorRGBA4f,    // four float channels
         ColorRGBA32,    // packed rgba
         Matrix4x4f,

@@ -32,6 +32,7 @@ namespace AssetManager.TypeTree
         private static readonly string[] Pos4FieldNames = { "x", "y", "z", "w" };
         private static readonly string[] Pos2IntFieldNames = { "x", "y" };
         private static readonly string[] Pos3IntFieldNames = { "x", "y", "z" };
+        private static readonly string[] Rect4fFieldNames = { "x", "y", "width", "height" };
         private static readonly string[] Color4fFieldNames = { "r", "g", "b", "a" };
         private static readonly string[] Matrix4x4FieldNames =
         {
@@ -130,6 +131,11 @@ namespace AssetManager.TypeTree
         public static bool EvalIsPos3Int(this TypeTreeBranch node)
         {
             return EvalHasIntChildren(node, Pos3IntFieldNames);
+        }
+
+        public static bool EvalIsRect4f(this TypeTreeBranch node)
+        {
+            return EvalHasFloatChildren(node, Rect4fFieldNames);
         }
 
         public static bool EvalIsColorRGBA4f(this TypeTreeBranch node)
@@ -266,6 +272,10 @@ namespace AssetManager.TypeTree
             else if (node.EvalIsPos2Int())
             {
                 return NodeDataType.Pos2Int;
+            }
+            else if (node.EvalIsRect4f())
+            {
+                return NodeDataType.Rect4f;
             }
             else if (node.EvalIsColorRGBA4f())
             {
